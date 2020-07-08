@@ -1,17 +1,32 @@
 import { ApolloServer } from 'apollo-server-micro';
 import { schema } from '../../apollo/schema';
+import { MicroRequest } from 'apollo-server-micro/dist/types';
+import { getCustomRepository } from 'typeorm';
 
-const context = async () => {
-  // const sessionToken = context.req.headers.authorization.split(' ')[1]
-  // // simple auth check on every request
-  // const auth = (req.headers && req.headers.authorization) || ''
-  // const email = new Buffer(auth, 'base64').toString('ascii')
-  // // if the email isn't formatted validly, return null for user
-  // if (!isEmail.validate(email)) return { user: null }
-  // // find a user by their email
-  // const users = await store.users.findOrCreate({ where: { email } })
-  // const user = users && users[0] ? users[0] : null
-  // return { user }
+import { UserRepository } from '../../lib/repository/User';
+import { ensureConnection } from '../../lib/db';
+
+export interface contextType {
+  sessionToken: string;
+  userRepository: UserRepository;
+}
+
+const context = async ({ req }: { req: MicroRequest }) => {
+  const sessionToken =
+    (req.headers &&
+      req.headers.authorization &&
+      req.headers.authorization.split(' ')[1]) ||
+    '';
+
+  //TODO optimize to open connection on demand
+  await ensureConnection();
+
+  const userRepository = getCustomRepository(UserRepository);
+
+  return {
+    sessionToken,
+    userRepository,
+  };
 };
 
 const apolloServer = new ApolloServer({

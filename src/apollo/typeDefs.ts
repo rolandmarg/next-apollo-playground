@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type User {
     id: ID!
     email: String!
-    createdAt: Int!
+    createdAt: String!
   }
 
   input SignUpInput {
@@ -18,15 +18,16 @@ export const typeDefs = gql`
   }
 
   type SignUpPayload {
-    user: User!
+    user: User
   }
 
   type SignInPayload {
-    user: User!
+    user: User
+    token: String
   }
 
   type Query {
-    user(id: ID!): User!
+    user(id: ID!): User
     users: [User]!
     viewer: User
   }

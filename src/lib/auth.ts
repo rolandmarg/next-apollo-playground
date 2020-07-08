@@ -1,28 +1,30 @@
-import Iron from '@hapi/iron'
+import Iron from '@hapi/iron';
 
-const sessionSecret = process.env.SESSION_SECRET as string
-const sessionMaxAge = process.env.SESSION_MAX_AGE as string
+const sessionSecret = process.env.SESSION_SECRET;
+const sessionMaxAge = process.env.SESSION_MAX_AGE;
 
 export interface Session {
-  id: string
-  email: string
+  id: number;
+  email: string;
+  creationTimestamp: number;
 }
 
 export async function encryptSession(session: Session) {
-  const obj = {
-    ...session,
-    createdAt: Date.now(),
-  }
-
-  return Iron.seal(obj, sessionSecret, Iron.defaults)
+  return Iron.seal(session, sessionSecret, Iron.defaults);
 }
 
 export async function decryptSession(sessionToken: string) {
-  const session = await Iron.unseal(sessionToken, sessionSecret, Iron.defaults)
+  const session: Session = await Iron.unseal(
+    sessionToken,
+    sessionSecret,
+    Iron.defaults
+  );
 
-  const expiresAt = (session.createdAt + Number(sessionMaxAge)) * 1000
+  const expiresAt = (session.creationTimestamp + Number(sessionMaxAge)) * 1000;
 
-  if (Date.now() < expiresAt) {
-    return session
+  if (Date.now() > expiresAt) {
+    throw new Error('session expired');
   }
+
+  return session;
 }
