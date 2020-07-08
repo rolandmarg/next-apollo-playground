@@ -1,9 +1,16 @@
 import { AppProps } from 'next/app'
+import { ApolloProvider } from '@apollo/react-hooks'
+import { useApollo } from '../apollo/client'
+
 import '../styles.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-const App = ({ Component, pageProps }: AppProps): JSX.Element => {
-  return <Component {...pageProps} />
-}
+export default function App({ Component, pageProps }: AppProps) {
+  const apolloClient = useApollo(pageProps.initialApolloState)
 
-export default App
+  return (
+    <ApolloProvider client={apolloClient}>
+      <Component {...pageProps} />
+    </ApolloProvider>
+  )
+}
