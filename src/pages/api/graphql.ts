@@ -15,6 +15,8 @@ const context = async ({ req }: { req: MicroRequest }) => {
   const sessionToken = req.headers?.authorization?.split(' ')[1];
 
   //TODO optimize to open connection on demand
+  //TODO move postgres to datasource
+  //TODO better error handling
 
   try {
     await ensureConnection();
@@ -33,6 +35,9 @@ const context = async ({ req }: { req: MicroRequest }) => {
 const apolloServer = new ApolloServer({
   schema,
   context,
+  engine: {
+    reportSchema: true,
+  },
 });
 
 export default apolloServer.createHandler({ path: '/api/graphql' });
