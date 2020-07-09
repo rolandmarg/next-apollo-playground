@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'reflect-metadata';
 import { Connection, getConnectionManager, ConnectionOptions } from 'typeorm';
-import { UserEntity } from './entity/User';
+import { User } from './entity/User';
 
 const options: ConnectionOptions = {
   type: 'postgres',
-  url: process.env.DATABASE_URL,
+  url: process.env.DB_URI,
   synchronize: process.env.NODE_ENV !== 'production',
-  entities: [UserEntity],
+  entities: [User],
 };
 
 function entitiesChanged(prevEntities: any[], newEntities: any[]) {
@@ -37,11 +37,15 @@ async function updateConnectionEntities(
   }
 }
 
-export async function ensureConnection(): Promise<Connection> {
+export async function ensureConnection() {
   const connectionManager = getConnectionManager();
 
   if (connectionManager.has('default')) {
     const connection = connectionManager.get('default');
+
+    if (!connection.isConnected) {
+      return connection.connect();
+    }
 
     if (process.env.NODE_ENV !== 'production') {
       await updateConnectionEntities(connection, options.entities as any[]);
@@ -50,5 +54,5 @@ export async function ensureConnection(): Promise<Connection> {
     return connection;
   }
 
-  return await connectionManager.create(options).connect();
+  return connectionManager.create(options).connect();
 }

@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { UserEntity } from '../lib/entity/User';
+import { User } from '../lib/entity/User';
 import { contextType } from '../pages/api/graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
@@ -15,6 +15,11 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+};
+
+export type Error = {
+  __typename?: 'Error';
+  msg: Scalars['String'];
 };
 
 export type Mutation = {
@@ -49,6 +54,7 @@ export type SignInInput = {
 
 export type SignInPayload = {
   __typename?: 'SignInPayload';
+  error?: Maybe<Error>;
   user?: Maybe<User>;
   token?: Maybe<Scalars['String']>;
 };
@@ -60,6 +66,7 @@ export type SignUpInput = {
 
 export type SignUpPayload = {
   __typename?: 'SignUpPayload';
+  error?: Maybe<Error>;
   user?: Maybe<User>;
 };
 
@@ -190,13 +197,14 @@ export type DirectiveResolverFn<
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  User: ResolverTypeWrapper<UserEntity>;
+  User: ResolverTypeWrapper<User>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Mutation: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   SignUpPayload: ResolverTypeWrapper<
     Omit<SignUpPayload, 'user'> & { user?: Maybe<ResolversTypes['User']> }
   >;
+  Error: ResolverTypeWrapper<Error>;
   SignInInput: SignInInput;
   SignInPayload: ResolverTypeWrapper<
     Omit<SignInPayload, 'user'> & { user?: Maybe<ResolversTypes['User']> }
@@ -208,18 +216,27 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Query: {};
   ID: Scalars['ID'];
-  User: UserEntity;
+  User: User;
   String: Scalars['String'];
   Mutation: {};
   SignUpInput: SignUpInput;
   SignUpPayload: Omit<SignUpPayload, 'user'> & {
     user?: Maybe<ResolversParentTypes['User']>;
   };
+  Error: Error;
   SignInInput: SignInInput;
   SignInPayload: Omit<SignInPayload, 'user'> & {
     user?: Maybe<ResolversParentTypes['User']>;
   };
   Boolean: Scalars['Boolean'];
+}>;
+
+export type ErrorResolvers<
+  ContextType = contextType,
+  ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']
+> = ResolversObject<{
+  msg?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type MutationResolvers<
@@ -262,6 +279,7 @@ export type SignInPayloadResolvers<
   ContextType = contextType,
   ParentType extends ResolversParentTypes['SignInPayload'] = ResolversParentTypes['SignInPayload']
 > = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -271,6 +289,7 @@ export type SignUpPayloadResolvers<
   ContextType = contextType,
   ParentType extends ResolversParentTypes['SignUpPayload'] = ResolversParentTypes['SignUpPayload']
 > = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
@@ -286,6 +305,7 @@ export type UserResolvers<
 }>;
 
 export type Resolvers<ContextType = contextType> = ResolversObject<{
+  Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SignInPayload?: SignInPayloadResolvers<ContextType>;

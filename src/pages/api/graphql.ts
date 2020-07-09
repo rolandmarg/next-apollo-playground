@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-micro';
+import { ApolloServer, ApolloError } from 'apollo-server-micro';
 import { schema } from '../../apollo/schema';
 import { MicroRequest } from 'apollo-server-micro/dist/types';
 import { getCustomRepository } from 'typeorm';
@@ -19,7 +19,12 @@ const context = async ({ req }: { req: MicroRequest }) => {
     '';
 
   //TODO optimize to open connection on demand
-  await ensureConnection();
+
+  try {
+    await ensureConnection();
+  } catch (e) {
+    throw new ApolloError(`Could not connect to db: ${e}`);
+  }
 
   const userRepository = getCustomRepository(UserRepository);
 

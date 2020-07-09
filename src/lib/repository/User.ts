@@ -1,9 +1,9 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { UserEntity } from '../entity/User';
+import { User } from '../entity/User';
 import { hash, compare } from 'bcrypt';
 
-@EntityRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> {
+@EntityRepository(User)
+export class UserRepository extends Repository<User> {
   findByName(firstName: string, lastName: string) {
     return this.findOne({ firstName, lastName });
   }

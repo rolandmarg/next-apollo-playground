@@ -1,12 +1,13 @@
 import Iron from '@hapi/iron';
+import ms from 'ms';
 
 const sessionSecret = process.env.SESSION_SECRET;
-const sessionMaxAge = process.env.SESSION_MAX_AGE;
+const sessionMaxAge = ms(process.env.SESSION_MAX_AGE);
 
 export interface Session {
   id: number;
   email: string;
-  creationTimestamp: number;
+  createdAt: number;
 }
 
 export async function encryptSession(session: Session) {
@@ -20,7 +21,7 @@ export async function decryptSession(sessionToken: string) {
     Iron.defaults
   );
 
-  const expiresAt = (session.creationTimestamp + Number(sessionMaxAge)) * 1000;
+  const expiresAt = session.createdAt + sessionMaxAge;
 
   if (Date.now() > expiresAt) {
     throw new Error('session expired');

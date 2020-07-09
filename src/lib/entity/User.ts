@@ -7,7 +7,7 @@ import {
 import { IsEmail } from 'class-validator';
 
 @Entity()
-export class UserEntity {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,7 +20,7 @@ export class UserEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 

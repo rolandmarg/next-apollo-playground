@@ -35,6 +35,13 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     async signUp(_parent, args, context, _info) {
+      const exists = await context.userRepository.findOne({
+        email: args.input.email,
+      });
+      if (exists) {
+        return { error: { msg: 'Email already taken' } };
+      }
+
       const hash = await context.userRepository.hashPassword(
         args.input.password
       );
@@ -44,6 +51,10 @@ export const resolvers: Resolvers = {
         password: hash,
       });
 
+      if (!user) {
+        return { error: { msg: 'db save error' } };
+      }
+
       return { user };
     },
 
@@ -52,18 +63,21 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (!user) {
-        return {};
+        return { error: { msg: 'db find error' } };
       }
 
-      await context.userRepository.validatePassword(
+      const isValid = await context.userRepository.validatePassword(
         args.input.password,
         user.password
       );
+      if (!isValid) {
+        return { error: { msg: 'invalid password' } };
+      }
 
       const session: Session = {
         id: user.id,
         email: user.email,
-        creationTimestamp: Date.now(),
+        createdAt: Date.now(),
       };
 
       const token = await encryptSession(session);
@@ -74,6 +88,12 @@ export const resolvers: Resolvers = {
   User: {
     id: (user) => {
       return user.id.toString();
+    },
+    email: (user) => {
+      return user.email;
+    },
+    createdAt: (user) => {
+      return user.createdAt.toString();
     },
   },
 };

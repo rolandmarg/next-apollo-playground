@@ -8,4 +8,4 @@ generates:
       useIndexSignature: true
       contextType: ../pages/api/graphql#contextType
       mappers:
-        User: ../lib/entity/User#UserEntity
+        User: ../lib/entity/User#User
