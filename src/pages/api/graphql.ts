@@ -12,11 +12,7 @@ export interface contextType {
 }
 
 const context = async ({ req }: { req: MicroRequest }) => {
-  const sessionToken =
-    (req.headers &&
-      req.headers.authorization &&
-      req.headers.authorization.split(' ')[1]) ||
-    '';
+  const sessionToken = req.headers?.authorization?.split(' ')[1];
 
   //TODO optimize to open connection on demand
 
