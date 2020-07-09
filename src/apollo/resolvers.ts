@@ -1,12 +1,17 @@
 import { encryptSession, decryptSession, Session } from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
+import {
+  AuthenticationError,
+  ApolloError,
+  UserInputError,
+} from 'apollo-server-micro';
 
 export const resolvers: Resolvers = {
   Query: {
     async viewer(_parent, _args, context, _info) {
       const session = await decryptSession(context.sessionToken);
       if (!session) {
-        return null;
+        throw new AuthenticationError('Not authorized');
       }
 
       const user = await context.userRepository.findOne({
@@ -14,7 +19,7 @@ export const resolvers: Resolvers = {
       });
 
       if (!user) {
-        return null;
+        throw new AuthenticationError('Not authorized');
       }
 
       return user;
@@ -39,7 +44,7 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (exists) {
-        return { error: { msg: 'Email already taken' } };
+        throw new UserInputError('Email already taken');
       }
 
       const hash = await context.userRepository.hashPassword(
@@ -52,7 +57,7 @@ export const resolvers: Resolvers = {
       });
 
       if (!user) {
-        return { error: { msg: 'db save error' } };
+        throw new ApolloError('Interal server error');
       }
 
       return { user };
@@ -63,7 +68,7 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (!user) {
-        return { error: { msg: 'db find error' } };
+        throw new UserInputError('Invalid email or password');
       }
 
       const isValid = await context.userRepository.validatePassword(
@@ -71,7 +76,7 @@ export const resolvers: Resolvers = {
         user.password
       );
       if (!isValid) {
-        return { error: { msg: 'invalid password' } };
+        throw new UserInputError('Invalid email or password');
       }
 
       const session: Session = {

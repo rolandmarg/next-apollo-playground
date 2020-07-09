@@ -7,10 +7,6 @@ export const typeDefs = gql`
     createdAt: String!
   }
 
-  type Error {
-    msg: String!
-  }
-
   input SignUpInput {
     email: String!
     password: String!
@@ -22,12 +18,10 @@ export const typeDefs = gql`
   }
 
   type SignUpPayload {
-    error: Error
     user: User
   }
 
   type SignInPayload {
-    error: Error
     user: User
     token: String
   }

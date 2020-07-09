@@ -16,7 +16,6 @@ const context = async ({ req }: { req: MicroRequest }) => {
 
   //TODO optimize to open connection on demand
   //TODO move postgres to datasource
-  //TODO better error handling
 
   try {
     await ensureConnection();
