@@ -1,5 +1,4 @@
 schema: 'src/apollo/typeDefs.ts'
-overwrite: true
 watch: true
 generates:
   src/__generated__/types.d.ts:
