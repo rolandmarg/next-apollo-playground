@@ -1,10 +1,25 @@
 import gql from 'graphql-tag';
 
 export const typeDefs = gql`
+  scalar Date
+
   type User {
     id: ID!
     email: String!
-    createdAt: String!
+    createdAt: Date!
+  }
+
+  type CalendarEvent {
+    id: ID!
+    title: String!
+    start: Date!
+    end: Date!
+  }
+
+  input CreateCalendarEventInput {
+    title: String!
+    start: Date!
+    end: Date!
   }
 
   input SignUpInput {
@@ -26,14 +41,23 @@ export const typeDefs = gql`
     token: String
   }
 
+  type CreateCalendarEventPayload {
+    calendarEvent: CalendarEvent
+  }
+
   type Query {
     user(id: ID!): User
     users: [User]!
     viewer: User
+    calendarEvents: [CalendarEvent]!
+    calendarEvent(id: ID!): CalendarEvent
   }
 
   type Mutation {
     signUp(input: SignUpInput!): SignUpPayload!
     signIn(input: SignInInput!): SignInPayload!
+    createCalendarEvent(
+      input: CreateCalendarEventInput!
+    ): CreateCalendarEventPayload!
   }
 `;

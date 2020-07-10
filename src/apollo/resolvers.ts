@@ -1,25 +1,45 @@
-import { encryptSession, decryptSession, Session } from '../lib/auth';
+import {
+  Session,
+  createSession,
+  hashPassword,
+  validatePassword,
+  validateSession,
+} from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
 import {
-  AuthenticationError,
   ApolloError,
   UserInputError,
+  AuthenticationError,
 } from 'apollo-server-micro';
+import { GraphQLScalarType, Kind } from 'graphql';
 
 export const resolvers: Resolvers = {
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      return new Date(value); // value from the client
+    },
+    serialize(value) {
+      return value; // value sent to the client
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return new Date(+ast.value); // ast value is always in string format
+      }
+      return null;
+    },
+  }),
   Query: {
     async viewer(_parent, _args, context, _info) {
-      const session = await decryptSession(context.sessionToken);
-      if (!session) {
-        throw new AuthenticationError('Not authorized');
+      if (!context.sessionToken) {
+        throw new AuthenticationError('Unauthorized');
       }
+      const session = await validateSession(context.sessionToken);
 
-      const user = await context.userRepository.findOne({
-        email: session.email,
-      });
-
+      const user = await context.userRepository.findOne(session.id);
       if (!user) {
-        throw new AuthenticationError('Not authorized');
+        return null;
       }
 
       return user;
@@ -37,6 +57,21 @@ export const resolvers: Resolvers = {
 
       return users;
     },
+    async calendarEvent(_parent, args, context) {
+      const calendarEvent = await context.calendarEventRepository.findOne(
+        args.id
+      );
+      if (!calendarEvent) {
+        return null;
+      }
+
+      return calendarEvent;
+    },
+    async calendarEvents(_parent, _args, context) {
+      const calendarEvents = await context.calendarEventRepository.find();
+
+      return calendarEvents;
+    },
   },
   Mutation: {
     async signUp(_parent, args, context, _info) {
@@ -44,12 +79,10 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (exists) {
-        throw new UserInputError('Email already taken');
+        throw new ApolloError('Email already taken');
       }
 
-      const hash = await context.userRepository.hashPassword(
-        args.input.password
-      );
+      const hash = await hashPassword(args.input.password);
 
       const user = await context.userRepository.save({
         email: args.input.email,
@@ -71,7 +104,7 @@ export const resolvers: Resolvers = {
         throw new UserInputError('Invalid email or password');
       }
 
-      const isValid = await context.userRepository.validatePassword(
+      const isValid = await validatePassword(
         args.input.password,
         user.password
       );
@@ -81,24 +114,27 @@ export const resolvers: Resolvers = {
 
       const session: Session = {
         id: user.id,
-        email: user.email,
         createdAt: Date.now(),
       };
 
-      const token = await encryptSession(session);
+      const token = await createSession(session);
 
       return { token, user };
+    },
+
+    async createCalendarEvent(_parent, args, context) {
+      const calendarEvent = await context.calendarEventRepository.save({
+        title: args.input.title,
+        start: args.input.start,
+        end: args.input.end,
+      });
+
+      return { calendarEvent };
     },
   },
   User: {
     id: (user) => {
       return user.id.toString();
-    },
-    email: (user) => {
-      return user.email;
-    },
-    createdAt: (user) => {
-      return user.createdAt.toString();
     },
   },
 };

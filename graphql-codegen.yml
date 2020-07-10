@@ -6,6 +6,7 @@ generates:
       - typescript-resolvers
     config:
       useIndexSignature: true
-      contextType: ../pages/api/graphql#contextType
+      contextType: ../pages/api/graphql#ContextData
       mappers:
         User: ../lib/entity/User#User
+        CalendarEvent: ../lib/entity/CalendarEvent#CalendarEvent

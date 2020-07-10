@@ -1,14 +1,16 @@
 import { ApolloServer, ApolloError } from 'apollo-server-micro';
 import { schema } from '../../apollo/schema';
 import { MicroRequest } from 'apollo-server-micro/dist/types';
-import { getCustomRepository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 
-import { UserRepository } from '../../lib/repository/User';
 import { ensureConnection } from '../../lib/db';
+import { User } from '../../lib/entity/User';
+import { CalendarEvent } from '../../lib/entity/CalendarEvent';
 
-export interface contextType {
-  sessionToken: string;
-  userRepository: UserRepository;
+export interface ContextData {
+  sessionToken: string | undefined;
+  userRepository: Repository<User>;
+  calendarEventRepository: Repository<CalendarEvent>;
 }
 
 const context = async ({ req }: { req: MicroRequest }) => {
@@ -23,12 +25,16 @@ const context = async ({ req }: { req: MicroRequest }) => {
     throw new ApolloError(`Could not connect to db: ${e}`);
   }
 
-  const userRepository = getCustomRepository(UserRepository);
+  const userRepository = getRepository(User);
+  const calendarEventRepository = getRepository(CalendarEvent);
 
-  return {
+  const ctx: ContextData = {
     sessionToken,
     userRepository,
+    calendarEventRepository,
   };
+
+  return ctx;
 };
 
 const apolloServer = new ApolloServer({
