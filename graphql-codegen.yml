@@ -8,6 +8,8 @@ generates:
     config:
       useIndexSignature: true
       contextType: ../pages/api/graphql#ContextData
+      scalars:
+        Date: Date
       mappers:
         User: ../lib/entity/User#User
         CalendarEvent: ../lib/entity/CalendarEvent#CalendarEvent

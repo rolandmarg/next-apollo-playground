@@ -23,7 +23,7 @@ export async function createSession(session: Session) {
   return Iron.seal(session, sessionSecret, Iron.defaults);
 }
 
-export async function validateSession(sessionToken: string) {
+export async function deserializeSession(sessionToken: string) {
   const session: Session = await Iron.unseal(
     sessionToken,
     sessionSecret,

@@ -1,16 +1,6 @@
-import {
-  Session,
-  createSession,
-  hashPassword,
-  validatePassword,
-  validateSession,
-} from '../lib/auth';
+import { createSession, hashPassword, validatePassword } from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
-import {
-  ApolloError,
-  UserInputError,
-  AuthenticationError,
-} from 'apollo-server-micro';
+import { ApolloError, UserInputError } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 export const resolvers: Resolvers = {
@@ -32,12 +22,7 @@ export const resolvers: Resolvers = {
   }),
   Query: {
     async viewer(_parent, _args, context, _info) {
-      if (!context.sessionToken) {
-        throw new AuthenticationError('Unauthorized');
-      }
-      const session = await validateSession(context.sessionToken);
-
-      const user = await context.userRepository.findOne(session.id);
+      const user = await context.userRepository.findOne(context.session?.id);
       if (!user) {
         return null;
       }
@@ -112,12 +97,7 @@ export const resolvers: Resolvers = {
         throw new UserInputError('Invalid email or password');
       }
 
-      const session: Session = {
-        id: user.id,
-        createdAt: Date.now(),
-      };
-
-      const token = await createSession(session);
+      const token = await createSession({ id: user.id, createdAt: Date.now() });
 
       return { token, user };
     },

@@ -1,21 +1,21 @@
 import { ApolloServer, ApolloError } from 'apollo-server-micro';
-import { schema } from '../../apollo/schema';
 import { MicroRequest } from 'apollo-server-micro/dist/types';
 import { getRepository, Repository } from 'typeorm';
 
+import { schema } from '../../apollo/schema';
 import { ensureConnection } from '../../lib/db';
 import { User } from '../../lib/entity/User';
 import { CalendarEvent } from '../../lib/entity/CalendarEvent';
+import { Session } from '../../lib/auth';
 
 export interface ContextData {
-  sessionToken: string | undefined;
+  req: MicroRequest;
+  session?: Session;
   userRepository: Repository<User>;
   calendarEventRepository: Repository<CalendarEvent>;
 }
 
 const context = async ({ req }: { req: MicroRequest }) => {
-  const sessionToken = req.headers?.authorization?.split(' ')[1];
-
   //TODO optimize to open connection on demand
   //TODO move postgres to datasource
 
@@ -29,7 +29,7 @@ const context = async ({ req }: { req: MicroRequest }) => {
   const calendarEventRepository = getRepository(CalendarEvent);
 
   const ctx: ContextData = {
-    sessionToken,
+    req,
     userRepository,
     calendarEventRepository,
   };
@@ -42,6 +42,10 @@ const apolloServer = new ApolloServer({
   context,
   engine: {
     reportSchema: true,
+  },
+  formatError: () => {
+    // TODO better error handling
+    return new Error('Interal Server Error');
   },
 });
 

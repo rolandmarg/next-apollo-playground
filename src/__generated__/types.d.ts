@@ -13,8 +13,9 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
+  Date: Date;
 };
+
 
 export type CalendarEvent = {
   __typename?: 'CalendarEvent';
@@ -218,6 +219,10 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
 }>;
 
+export type AuthDirectiveArgs = {  };
+
+export type AuthDirectiveResolver<Result, Parent, ContextType = ContextData, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
 export type CalendarEventResolvers<ContextType = ContextData, ParentType extends ResolversParentTypes['CalendarEvent'] = ResolversParentTypes['CalendarEvent']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -284,3 +289,13 @@ export type Resolvers<ContextType = ContextData> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = ContextData> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = ContextData> = ResolversObject<{
+  auth?: AuthDirectiveResolver<any, any, ContextType>;
+}>;
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = ContextData> = DirectiveResolvers<ContextType>;

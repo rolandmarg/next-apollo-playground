@@ -3,6 +3,8 @@ import gql from 'graphql-tag';
 export const typeDefs = gql`
   scalar Date
 
+  directive @auth on OBJECT | FIELD_DEFINITION
+
   type User {
     id: ID!
     email: String!
@@ -48,16 +50,16 @@ export const typeDefs = gql`
   type Query {
     user(id: ID!): User
     users: [User]!
-    viewer: User
+    viewer: User @auth
     calendarEvents: [CalendarEvent]!
     calendarEvent(id: ID!): CalendarEvent
   }
 
   type Mutation {
-    signUp(input: SignUpInput!): SignUpPayload!
-    signIn(input: SignInInput!): SignInPayload!
+    signUp(input: SignUpInput!): SignUpPayload! @auth
+    signIn(input: SignInInput!): SignInPayload! @auth
     createCalendarEvent(
       input: CreateCalendarEventInput!
-    ): CreateCalendarEventPayload!
+    ): CreateCalendarEventPayload! @auth
   }
 `;
