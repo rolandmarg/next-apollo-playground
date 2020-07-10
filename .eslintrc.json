@@ -11,6 +11,11 @@
     "plugin:react-hooks/recommended",
     "prettier"
   ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "parser": "@typescript-eslint/parser",
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
   "rules": {
