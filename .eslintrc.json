@@ -43,6 +43,5 @@
         "allow": ["warn", "error"]
       }
     ]
-  },
-  "ignorePatterns": ["**/__generated__"]
+  }
 }
