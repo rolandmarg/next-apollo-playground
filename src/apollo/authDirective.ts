@@ -6,12 +6,10 @@ import {
   GraphQLObjectType,
   GraphQLField,
 } from 'graphql';
-import {
-  SchemaDirectiveVisitor,
-  AuthenticationError,
-} from 'apollo-server-micro';
+import { SchemaDirectiveVisitor } from 'apollo-server-micro';
 import { deserializeSession } from '../lib/auth';
 import { ContextData } from '../pages/api/graphql';
+import { AuthorizationError } from '../lib/error';
 
 export class AuthDirective extends SchemaDirectiveVisitor {
   public static getDirectiveDeclaration(
@@ -39,7 +37,7 @@ export class AuthDirective extends SchemaDirectiveVisitor {
       field.resolve = async function (result, args, context, info) {
         const sessionToken = context.req.headers?.authorization?.split(' ')[1];
         if (!sessionToken) {
-          throw new AuthenticationError('Unauthorized');
+          throw new AuthorizationError();
         }
 
         const session = await deserializeSession(sessionToken);
@@ -54,7 +52,7 @@ export class AuthDirective extends SchemaDirectiveVisitor {
     field.resolve = async function (result, args, context, info) {
       const sessionToken = context.req.headers?.authorization?.split(' ')[1];
       if (!sessionToken) {
-        throw new AuthenticationError('Unauthorized');
+        throw new AuthorizationError();
       }
 
       const session = await deserializeSession(sessionToken);

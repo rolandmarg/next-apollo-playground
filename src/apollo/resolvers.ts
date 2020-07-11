@@ -1,7 +1,7 @@
 import { createSession, hashPassword, validatePassword } from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
-import { ApolloError, UserInputError } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind } from 'graphql';
+import { BadRequest, DatabaseError } from '../lib/error';
 
 export const resolvers: Resolvers = {
   Date: new GraphQLScalarType({
@@ -64,7 +64,7 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (exists) {
-        throw new ApolloError('Email already taken');
+        throw new BadRequest('Email already taken');
       }
 
       const hash = await hashPassword(args.input.password);
@@ -75,7 +75,7 @@ export const resolvers: Resolvers = {
       });
 
       if (!user) {
-        throw new ApolloError('Interal server error');
+        throw new DatabaseError();
       }
 
       return { user };
@@ -86,7 +86,7 @@ export const resolvers: Resolvers = {
         email: args.input.email,
       });
       if (!user) {
-        throw new UserInputError('Invalid email or password');
+        throw new BadRequest('Invalid email or password');
       }
 
       const isValid = await validatePassword(
@@ -94,7 +94,7 @@ export const resolvers: Resolvers = {
         user.password
       );
       if (!isValid) {
-        throw new UserInputError('Invalid email or password');
+        throw new BadRequest('Invalid email or password');
       }
 
       const token = await createSession({ id: user.id, createdAt: Date.now() });

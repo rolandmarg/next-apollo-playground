@@ -56,10 +56,10 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    signUp(input: SignUpInput!): SignUpPayload! @auth
-    signIn(input: SignInInput!): SignInPayload! @auth
+    signUp(input: SignUpInput!): SignUpPayload!
+    signIn(input: SignInInput!): SignInPayload!
     createCalendarEvent(
       input: CreateCalendarEventInput!
-    ): CreateCalendarEventPayload! @auth
+    ): CreateCalendarEventPayload!
   }
 `;

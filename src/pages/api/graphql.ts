@@ -1,4 +1,4 @@
-import { ApolloServer, ApolloError } from 'apollo-server-micro';
+import { ApolloServer } from 'apollo-server-micro';
 import { MicroRequest } from 'apollo-server-micro/dist/types';
 import { getRepository, Repository } from 'typeorm';
 
@@ -7,6 +7,7 @@ import { ensureConnection } from '../../lib/db';
 import { User } from '../../lib/entity/User';
 import { CalendarEvent } from '../../lib/entity/CalendarEvent';
 import { Session } from '../../lib/auth';
+import { InternalServerError, AppError } from '../../lib/error';
 
 export interface ContextData {
   req: MicroRequest;
@@ -19,11 +20,7 @@ const context = async ({ req }: { req: MicroRequest }) => {
   //TODO optimize to open connection on demand
   //TODO move postgres to datasource
 
-  try {
-    await ensureConnection();
-  } catch (e) {
-    throw new ApolloError(`Could not connect to db: ${e}`);
-  }
+  await ensureConnection();
 
   const userRepository = getRepository(User);
   const calendarEventRepository = getRepository(CalendarEvent);
@@ -43,9 +40,15 @@ const apolloServer = new ApolloServer({
   engine: {
     reportSchema: true,
   },
-  formatError: () => {
-    // TODO better error handling
-    return new Error('Interal Server Error');
+  formatError: (error) => {
+    const appError = error.originalError instanceof AppError;
+    const production = process.env.NODE_ENV === 'production';
+
+    if (production && !appError) {
+      return new InternalServerError();
+    }
+
+    return error;
   },
 });
 

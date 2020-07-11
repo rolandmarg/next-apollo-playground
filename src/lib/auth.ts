@@ -1,6 +1,7 @@
 import { hash, compare } from 'bcrypt';
 import Iron from '@hapi/iron';
 import ms from 'ms';
+import { AuthorizationError } from './error';
 
 const sessionSecret = process.env.SESSION_SECRET;
 const sessionMaxAge = ms(process.env.SESSION_MAX_AGE);
@@ -31,13 +32,13 @@ export async function deserializeSession(sessionToken: string) {
   );
 
   if (isNaN(session.id) || isNaN(session.createdAt)) {
-    throw new Error('Invalid session');
+    throw new AuthorizationError('Invalid session');
   }
 
   const expiresAt = session.createdAt + sessionMaxAge;
 
   if (Date.now() > expiresAt) {
-    throw new Error('Session expired');
+    throw new AuthorizationError('Session expired');
   }
 
   return session;
