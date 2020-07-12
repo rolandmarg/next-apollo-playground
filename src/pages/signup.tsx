@@ -1,26 +1,10 @@
 import Link from 'next/link'
 import { FormEvent } from 'react'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-import { SignUpMutation, SignUpMutationVariables } from '../__generated__/types'
 import NavBar from '../components/Navbar'
-
-const SIGN_UP = gql`
-  mutation SignUp($email: String!, $password: String!) {
-    signUp(input: { email: $email, password: $password }) {
-      user {
-        id
-        email
-      }
-    }
-  }
-`
+import { useSignUpMutation } from '../__generated__/react-types.d'
 
 export default function SignUp() {
-  const [signUp, { loading, error }] = useMutation<
-    SignUpMutation,
-    SignUpMutationVariables
-  >(SIGN_UP)
+  const [signUp, { loading, error }] = useSignUpMutation()
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

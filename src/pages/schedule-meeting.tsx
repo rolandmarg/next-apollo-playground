@@ -1,14 +1,12 @@
 import moment from 'moment'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import NavBar from '../components/Navbar'
-import gql from 'graphql-tag'
-import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
+  useCalendarEventsQuery,
+  useCreateCalendarEventMutation,
   CalendarEventsQuery,
-  CalendarEventsQueryVariables,
-  CreateCalendarEventMutation,
-  CreateCalendarEventMutationVariables,
-} from '../__generated__/types'
+  CalendarEventsDocument,
+} from '../__generated__/react-types.d'
 
 const localizer = momentLocalizer(moment)
 
@@ -17,43 +15,13 @@ interface CalendarSlotInfo {
   end: string | Date
 }
 
-const CALENDAR_EVENTS = gql`
-  query CalendarEvents {
-    calendarEvents {
-      id
-      title
-      start
-      end
-    }
-  }
-`
-
-const CREATE_CALENDAR_EVENTS = gql`
-  mutation CreateCalendarEvent(
-    $title: String!
-    $start: ISODate!
-    $end: ISODate!
-  ) {
-    createCalendarEvent(input: { title: $title, start: $start, end: $end }) {
-      calendarEvent {
-        id
-        title
-        start
-        end
-      }
-    }
-  }
-`
-
 export default function ScheduleMeeting() {
-  const { data, error } = useQuery<
-    CalendarEventsQuery,
-    CalendarEventsQueryVariables
-  >(CALENDAR_EVENTS)
-  const [createCalendarEvents, { error: mutationError }] = useMutation<
-    CreateCalendarEventMutation,
-    CreateCalendarEventMutationVariables
-  >(CREATE_CALENDAR_EVENTS, {
+  const { data, error } = useCalendarEventsQuery()
+
+  const [
+    createCalendarEvents,
+    { error: mutationError },
+  ] = useCreateCalendarEventMutation({
     update: (cache, { data }) => {
       const createdEvent = data?.createCalendarEvent.calendarEvent
 
@@ -62,13 +30,13 @@ export default function ScheduleMeeting() {
       }
 
       const events = cache.readQuery<CalendarEventsQuery>({
-        query: CALENDAR_EVENTS,
+        query: CalendarEventsDocument,
       })
 
       const existingEvents = events?.calendarEvents || []
 
       cache.writeQuery({
-        query: CALENDAR_EVENTS,
+        query: CalendarEventsDocument,
         data: {
           calendarEvents: [...existingEvents, createdEvent],
         },

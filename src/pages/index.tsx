@@ -1,21 +1,9 @@
-import gql from 'graphql-tag'
-import { useQuery } from '@apollo/react-hooks'
-import { ViewerQuery, ViewerQueryVariables } from '../__generated__/types'
 import NavBar from '../components/Navbar'
-
-const VIEWER = gql`
-  query Viewer {
-    viewer {
-      id
-      email
-    }
-  }
-`
+import { useViewerQuery } from '../__generated__/react-types.d'
 
 export default function Home() {
-  const { data, loading, error } = useQuery<ViewerQuery, ViewerQueryVariables>(
-    VIEWER
-  )
+  const { data, loading, error } = useViewerQuery()
+
   return (
     <div>
       <NavBar />

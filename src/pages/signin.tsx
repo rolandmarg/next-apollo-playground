@@ -1,29 +1,11 @@
 import { FormEvent } from 'react'
-import { useMutation, useApolloClient } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-import { SignInMutation, SignInMutationVariables } from '../__generated__/types'
 import { useRouter } from 'next/router'
 import NavBar from '../components/Navbar'
-
-const SIGN_IN = gql`
-  mutation SignIn($email: String!, $password: String!) {
-    signIn(input: { email: $email, password: $password }) {
-      user {
-        id
-        email
-      }
-      token
-    }
-  }
-`
+import { useSignInMutation } from '../__generated__/react-types.d'
 
 export default function SignIn() {
-  useApolloClient()
   const router = useRouter()
-  const [signIn, { error, loading, client }] = useMutation<
-    SignInMutation,
-    SignInMutationVariables
-  >(SIGN_IN, {
+  const [signIn, { error, loading, client }] = useSignInMutation({
     onCompleted: async (data) => {
       const token = data.signIn.token
 
