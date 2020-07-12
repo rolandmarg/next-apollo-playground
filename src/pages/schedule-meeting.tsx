@@ -6,7 +6,7 @@ import {
   useCreateCalendarEventMutation,
   CalendarEventsQuery,
   CalendarEventsDocument,
-} from '../__generated__/react-types.d'
+} from '../__generated__/react-apollo.d'
 
 const localizer = momentLocalizer(moment)
 

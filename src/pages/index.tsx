@@ -1,5 +1,5 @@
 import NavBar from '../components/Navbar'
-import { useViewerQuery } from '../__generated__/react-types.d'
+import { useViewerQuery } from '../__generated__/react-apollo.d'
 
 export default function Home() {
   const { data, loading, error } = useViewerQuery()

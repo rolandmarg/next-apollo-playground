@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { FormEvent } from 'react'
 import NavBar from '../components/Navbar'
-import { useSignUpMutation } from '../__generated__/react-types.d'
+import { useSignUpMutation } from '../__generated__/react-apollo.d'
 
 export default function SignUp() {
   const [signUp, { loading, error }] = useSignUpMutation()

@@ -1,7 +1,7 @@
 import { FormEvent } from 'react'
 import { useRouter } from 'next/router'
 import NavBar from '../components/Navbar'
-import { useSignInMutation } from '../__generated__/react-types.d'
+import { useSignInMutation } from '../__generated__/react-apollo.d'
 
 export default function SignIn() {
   const router = useRouter()
