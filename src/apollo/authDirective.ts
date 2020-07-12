@@ -35,11 +35,10 @@ export class AuthDirective extends SchemaDirectiveVisitor {
       const next = field.resolve || defaultFieldResolver;
 
       field.resolve = async function (result, args, context, info) {
-        const sessionToken = context.req.headers?.authorization?.split(' ')[1];
+        const sessionToken = context.req.headers?.authorization;
         if (!sessionToken) {
           throw new AuthorizationError();
         }
-
         const session = await deserializeSession(sessionToken);
 
         return next(result, args, { ...context, session }, info);
@@ -50,7 +49,7 @@ export class AuthDirective extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, ContextData>) {
     const next = field.resolve || defaultFieldResolver;
     field.resolve = async function (result, args, context, info) {
-      const sessionToken = context.req.headers?.authorization?.split(' ')[1];
+      const sessionToken = context.req.headers?.authorization;
       if (!sessionToken) {
         throw new AuthorizationError();
       }

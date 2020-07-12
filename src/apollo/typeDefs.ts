@@ -1,27 +1,27 @@
 import gql from 'graphql-tag';
 
 export const typeDefs = gql`
-  scalar Date
+  scalar ISODate
 
   directive @auth on OBJECT | FIELD_DEFINITION
 
   type User {
     id: ID!
     email: String!
-    createdAt: Date!
+    createdAt: ISODate!
   }
 
   type CalendarEvent {
     id: ID!
     title: String!
-    start: Date!
-    end: Date!
+    start: ISODate!
+    end: ISODate!
   }
 
   input CreateCalendarEventInput {
     title: String!
-    start: Date!
-    end: Date!
+    start: ISODate!
+    end: ISODate!
   }
 
   input SignUpInput {
@@ -49,9 +49,9 @@ export const typeDefs = gql`
 
   type Query {
     user(id: ID!): User
-    users: [User]!
+    users: [User!]!
     viewer: User @auth
-    calendarEvents: [CalendarEvent]!
+    calendarEvents: [CalendarEvent!]!
     calendarEvent(id: ID!): CalendarEvent
   }
 
@@ -61,5 +61,6 @@ export const typeDefs = gql`
     createCalendarEvent(
       input: CreateCalendarEventInput!
     ): CreateCalendarEventPayload!
+    deleteCalendarEvents: Boolean
   }
 `;

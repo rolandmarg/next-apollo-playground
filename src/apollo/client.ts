@@ -10,14 +10,25 @@ function createIsomorphLink() {
     const { schema } = require('./schema');
     return new SchemaLink({ schema });
   } else {
-    const { HttpLink } = require('apollo-link-http');
-    return new HttpLink({
+    const { createHttpLink } = require('apollo-link-http');
+    const { setContext } = require('apollo-link-context');
+
+    const httpLink = createHttpLink({
       uri: '/api/graphql',
       credentials: 'same-origin',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
     });
+
+    const authLink = setContext((_: any, { headers }: any) => {
+      const token = localStorage.getItem('token');
+      return {
+        headers: {
+          ...headers,
+          ...(token && { authorization: token }),
+        },
+      };
+    });
+
+    return authLink.concat(httpLink);
   }
 }
 

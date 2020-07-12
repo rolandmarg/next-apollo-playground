@@ -27,7 +27,7 @@ export class AuthorizationError extends AppError {
 }
 
 export class DatabaseError extends AppError {
-  constructor(message = 'Database down') {
+  constructor(message = 'Database error') {
     super(503, message);
   }
 }

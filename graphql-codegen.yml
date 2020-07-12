@@ -1,15 +1,19 @@
 schema: 'src/apollo/typeDefs.ts'
 watch: true
+documents:
+  - src/**/*.ts
+  - src/**/*.tsx
 generates:
   src/__generated__/types.d.ts:
     plugins:
       - typescript
+      - typescript-operations
       - typescript-resolvers
     config:
       useIndexSignature: true
       contextType: ../pages/api/graphql#ContextData
       scalars:
-        Date: Date
+        ISODate: Date
       mappers:
-        User: ../lib/entity/User#User
-        CalendarEvent: ../lib/entity/CalendarEvent#CalendarEvent
+        User: ../lib/entity/User#UserEntity
+        CalendarEvent: ../lib/entity/CalendarEvent#CalendarEventEntity

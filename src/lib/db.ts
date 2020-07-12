@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'reflect-metadata';
 import { Connection, getConnectionManager, ConnectionOptions } from 'typeorm';
-import { User } from './entity/User';
-import { CalendarEvent } from './entity/CalendarEvent';
+import { UserEntity } from './entity/User';
+import { CalendarEventEntity } from './entity/CalendarEvent';
 
 const options: ConnectionOptions = {
   type: 'postgres',
   url: process.env.DB_URI,
   synchronize: process.env.NODE_ENV !== 'production',
-  entities: [User, CalendarEvent],
+  entities: [UserEntity, CalendarEventEntity],
 };
 
 function entitiesChanged(prevEntities: any[], newEntities: any[]) {

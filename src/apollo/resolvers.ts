@@ -1,21 +1,21 @@
 import { createSession, hashPassword, validatePassword } from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
-import { GraphQLScalarType, Kind } from 'graphql';
 import { BadRequest, DatabaseError } from '../lib/error';
+import { GraphQLScalarType, Kind } from 'graphql';
 
 export const resolvers: Resolvers = {
-  Date: new GraphQLScalarType({
-    name: 'Date',
-    description: 'Date custom scalar type',
-    parseValue(value) {
-      return new Date(value); // value from the client
-    },
+  ISODate: new GraphQLScalarType({
+    name: 'ISODate',
+    description: 'ISO Timestamp',
     serialize(value) {
-      return value; // value sent to the client
+      return value instanceof Date ? value.toISOString() : null;
+    },
+    parseValue(value) {
+      return new Date(value);
     },
     parseLiteral(ast) {
-      if (ast.kind === Kind.INT) {
-        return new Date(+ast.value); // ast value is always in string format
+      if (ast.kind === Kind.STRING) {
+        return new Date(ast.value);
       }
       return null;
     },
@@ -111,10 +111,10 @@ export const resolvers: Resolvers = {
 
       return { calendarEvent };
     },
-  },
-  User: {
-    id: (user) => {
-      return user.id.toString();
+    async deleteCalendarEvents(_parent, _args, context) {
+      const result = await context.calendarEventRepository.delete({});
+
+      return !!result.affected;
     },
   },
 };
