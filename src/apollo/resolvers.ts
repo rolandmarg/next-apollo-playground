@@ -1,7 +1,8 @@
+import { GraphQLScalarType, Kind } from 'graphql';
+
 import { createSession, hashPassword, validatePassword } from '../lib/auth';
 import { Resolvers } from '../__generated__/types';
 import { BadRequest, DatabaseError } from '../lib/error';
-import { GraphQLScalarType, Kind } from 'graphql';
 
 export const resolvers: Resolvers = {
   ISODate: new GraphQLScalarType({

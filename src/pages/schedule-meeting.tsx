@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
+
 import NavBar from '../components/Navbar'
 import {
   useCalendarEventsQuery,

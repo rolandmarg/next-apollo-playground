@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
+import { gql } from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client';
+import * as ApolloReactHooks from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -13,6 +13,14 @@ export type Scalars = {
   ISODate: any;
 };
 
+
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  email: Scalars['String'];
+  createdAt: Scalars['ISODate'];
+};
 
 export type CalendarEvent = {
   __typename?: 'CalendarEvent';
@@ -28,11 +36,50 @@ export type CreateCalendarEventInput = {
   end: Scalars['ISODate'];
 };
 
+export type SignUpInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type SignInInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type SignUpPayload = {
+  __typename?: 'SignUpPayload';
+  user?: Maybe<User>;
+};
+
+export type SignInPayload = {
+  __typename?: 'SignInPayload';
+  user?: Maybe<User>;
+  token?: Maybe<Scalars['String']>;
+};
+
 export type CreateCalendarEventPayload = {
   __typename?: 'CreateCalendarEventPayload';
   calendarEvent?: Maybe<CalendarEvent>;
 };
 
+export type Query = {
+  __typename?: 'Query';
+  user?: Maybe<User>;
+  users: Array<User>;
+  viewer?: Maybe<User>;
+  calendarEvents: Array<CalendarEvent>;
+  calendarEvent?: Maybe<CalendarEvent>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryCalendarEventArgs = {
+  id: Scalars['ID'];
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -55,53 +102,6 @@ export type MutationSignInArgs = {
 
 export type MutationCreateCalendarEventArgs = {
   input: CreateCalendarEventInput;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  user?: Maybe<User>;
-  users: Array<User>;
-  viewer?: Maybe<User>;
-  calendarEvents: Array<CalendarEvent>;
-  calendarEvent?: Maybe<CalendarEvent>;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type QueryCalendarEventArgs = {
-  id: Scalars['ID'];
-};
-
-export type SignInInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type SignInPayload = {
-  __typename?: 'SignInPayload';
-  user?: Maybe<User>;
-  token?: Maybe<Scalars['String']>;
-};
-
-export type SignUpInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type SignUpPayload = {
-  __typename?: 'SignUpPayload';
-  user?: Maybe<User>;
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  email: Scalars['String'];
-  createdAt: Scalars['ISODate'];
 };
 
 export type CreateCalendarEventMutationVariables = Exact<{

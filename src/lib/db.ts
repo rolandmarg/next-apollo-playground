@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import 'reflect-metadata';
 import { Connection, getConnectionManager, ConnectionOptions } from 'typeorm';
+
 import { UserEntity } from './entity/User';
 import { CalendarEventEntity } from './entity/CalendarEvent';
 

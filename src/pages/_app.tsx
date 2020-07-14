@@ -1,5 +1,5 @@
 import { AppProps } from 'next/app'
-import { ApolloProvider } from '@apollo/react-hooks'
+import { ApolloProvider } from '@apollo/client'
 import { useApollo } from '../apollo/client'
 
 import '../styles.css'

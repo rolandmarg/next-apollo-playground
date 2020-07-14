@@ -12,6 +12,9 @@ generates:
       withComponent: false
       withHOC: false
       withHooks: true
+      apolloReactCommonImportFrom: '@apollo/client'
+      apolloReactHooksImportFrom: '@apollo/client'
+      gqlImport: '@apollo/client#gql'
   src/__generated__/types.d.ts:
     plugins:
       - typescript

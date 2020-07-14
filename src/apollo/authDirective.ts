@@ -1,3 +1,4 @@
+import { SchemaDirectiveVisitor } from 'apollo-server-micro';
 import {
   DirectiveLocation,
   GraphQLDirective,
@@ -6,9 +7,9 @@ import {
   GraphQLObjectType,
   GraphQLField,
 } from 'graphql';
-import { SchemaDirectiveVisitor } from 'apollo-server-micro';
-import { deserializeSession } from '../lib/auth';
+
 import { ContextData } from '../pages/api/graphql';
+import { deserializeSession } from '../lib/auth';
 import { AuthorizationError } from '../lib/error';
 
 export class AuthDirective extends SchemaDirectiveVisitor {

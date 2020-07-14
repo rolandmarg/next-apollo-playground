@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { FormEvent } from 'react'
+
 import NavBar from '../components/Navbar'
 import { useSignUpMutation } from '../__generated__/react-apollo.d'
 

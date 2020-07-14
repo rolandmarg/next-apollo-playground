@@ -1,5 +1,6 @@
 import { FormEvent } from 'react'
 import { useRouter } from 'next/router'
+
 import NavBar from '../components/Navbar'
 import { useSignInMutation } from '../__generated__/react-apollo.d'
 

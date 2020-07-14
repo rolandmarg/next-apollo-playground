@@ -1,6 +1,7 @@
 import { hash, compare } from 'bcrypt';
 import Iron from '@hapi/iron';
 import ms from 'ms';
+
 import { AuthorizationError } from './error';
 
 const sessionSecret = process.env.SESSION_SECRET;
