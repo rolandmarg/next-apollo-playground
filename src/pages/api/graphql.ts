@@ -17,12 +17,6 @@ export interface ContextData {
 }
 
 const context = async ({ req }: { req: MicroRequest }) => {
-  //TODO optimize to open connection on demand
-  //TODO move postgres to datasource
-  //TODO dont crash whole endpoint for db down
-  //TODO check memory leaks and performance
-  //TODO read this https://www.apollographql.com/docs/link/links/http/
-  //TODO move queries and mutations together, possibly add codegen plugin for autogeneration
   await ensureConnection();
 
   const userRepository = getRepository(UserEntity);
